@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using HotelDubrovnikAPI.Models;
 
 namespace HotelDubrovnikAPI.Data
 {
@@ -6,7 +7,8 @@ namespace HotelDubrovnikAPI.Data
     {
         public DataContext(DbContextOptions options) : base(options) { }
 
-        public DbSet<Models.Event> Events { get; set; }
-        public DbSet<Models.Rooms> Rooms { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<Rooms> Rooms { get; set; }
+        //public DbSet<Reservations> Reservation { get; set; }
     }
 }
