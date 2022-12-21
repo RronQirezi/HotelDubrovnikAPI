@@ -53,6 +53,45 @@ namespace HotelDubrovnikAPI.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("HotelDubrovnikAPI.Models.Reservations", b =>
+                {
+                    b.Property<int>("reservation_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("reservation_id"));
+
+                    b.Property<DateTime>("from_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("full_name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("identification")
+                        .HasColumnType("int");
+
+                    b.Property<string>("payment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("phone_number")
+                        .HasColumnType("int");
+
+                    b.Property<int>("room_id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("to_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("user_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("reservation_id");
+
+                    b.ToTable("Reservations");
+                });
+
             modelBuilder.Entity("HotelDubrovnikAPI.Models.Rooms", b =>
                 {
                     b.Property<int>("Room_Id")

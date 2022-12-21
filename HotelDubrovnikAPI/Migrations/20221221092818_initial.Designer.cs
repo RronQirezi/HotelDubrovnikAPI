@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelDubrovnikAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221207115144_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20221221092818_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,6 +54,45 @@ namespace HotelDubrovnikAPI.Migrations
                     b.HasKey("EventId");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("HotelDubrovnikAPI.Models.Reservations", b =>
+                {
+                    b.Property<int>("reservation_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("reservation_id"));
+
+                    b.Property<DateTime>("from_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("full_name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("identification")
+                        .HasColumnType("int");
+
+                    b.Property<string>("payment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("phone_number")
+                        .HasColumnType("int");
+
+                    b.Property<int>("room_id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("to_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("user_id")
+                        .HasColumnType("int");
+
+                    b.HasKey("reservation_id");
+
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("HotelDubrovnikAPI.Models.Rooms", b =>

@@ -9,6 +9,6 @@ namespace HotelDubrovnikAPI.Data
 
         public DbSet<Event> Events { get; set; }
         public DbSet<Rooms> Rooms { get; set; }
-        //public DbSet<Reservations> Reservation { get; set; }
+        public DbSet<Reservations> Reservations { get; set; }
     }
 }
