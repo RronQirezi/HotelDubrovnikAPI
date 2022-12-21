@@ -15,18 +15,18 @@ namespace HotelDubrovnikAPI.Migrations
                 name: "Events",
                 columns: table => new
                 {
-                    EventId = table.Column<int>(type: "int", nullable: false)
+                    eventid = table.Column<int>(name: "event_id", type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EventTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EventDateFrom = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EventDateTo = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EventImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EventDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EventURL = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    eventtitle = table.Column<string>(name: "event_title", type: "nvarchar(max)", nullable: true),
+                    fromdate = table.Column<DateTime>(name: "from_date", type: "datetime2", nullable: false),
+                    todate = table.Column<DateTime>(name: "to_date", type: "datetime2", nullable: false),
+                    eventimg = table.Column<string>(name: "event_img", type: "nvarchar(max)", nullable: true),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    eventurl = table.Column<string>(name: "event_url", type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Events", x => x.EventId);
+                    table.PrimaryKey("PK_Events", x => x.eventid);
                 });
 
             migrationBuilder.CreateTable(

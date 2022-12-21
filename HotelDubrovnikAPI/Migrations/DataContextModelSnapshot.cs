@@ -24,31 +24,31 @@ namespace HotelDubrovnikAPI.Migrations
 
             modelBuilder.Entity("HotelDubrovnikAPI.Models.Event", b =>
                 {
-                    b.Property<int>("EventId")
+                    b.Property<int>("event_id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("event_id"));
 
-                    b.Property<DateTime>("EventDateFrom")
+                    b.Property<string>("description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("event_img")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("event_title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("event_url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("from_date")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("EventDateTo")
+                    b.Property<DateTime>("to_date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("EventDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EventImage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EventTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EventURL")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("EventId");
+                    b.HasKey("event_id");
 
                     b.ToTable("Events");
                 });
