@@ -100,6 +100,7 @@ namespace HotelDubrovnikAPI.Controllers
             return NoContent();
         }
 
+
         private bool ReservationsExists(int id)
         {
             return _context.Reservations.Any(e => e.reservation_id == id);

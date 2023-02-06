@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HotelDubrovnikAPI.Data;
 using HotelDubrovnikAPI.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace HotelDubrovnikAPI.Controllers
 {
@@ -104,5 +105,7 @@ namespace HotelDubrovnikAPI.Controllers
         {
             return _context.Rooms.Any(e => e.Room_Id == id);
         }
+
+        
     }
 }
