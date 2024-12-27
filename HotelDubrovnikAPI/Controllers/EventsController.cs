@@ -23,14 +23,14 @@ namespace HotelDubrovnikAPI.Controllers
 
         // GET: api/Events
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Event>>> GetEvents()
+        public async Task<ActionResult<IEnumerable<Events>>> GetEvents()
         {
             return await _context.Events.ToListAsync();
         }
 
         // GET: api/Events/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Event>> GetEvent(int id)
+        public async Task<ActionResult<Events>> GetEvent(int id)
         {
             var @event = await _context.Events.FindAsync(id);
 
@@ -45,9 +45,9 @@ namespace HotelDubrovnikAPI.Controllers
         // PUT: api/Events/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEvent(int id, Event @event)
+        public async Task<IActionResult> PutEvent(int id, Events @event)
         {
-            if (id != @event.event_id)
+            if (id != @event.Event_id)
             {
                 return BadRequest();
             }
@@ -76,12 +76,12 @@ namespace HotelDubrovnikAPI.Controllers
         // POST: api/Events
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Event>> PostEvent(Event @event)
+        public async Task<ActionResult<Events>> PostEvent(Events @event)
         {
             _context.Events.Add(@event);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEvent", new { id = @event.event_id }, @event);
+            return CreatedAtAction("GetEvent", new { id = @event.Event_id }, @event);
         }
 
         // DELETE: api/Events/5
@@ -102,7 +102,7 @@ namespace HotelDubrovnikAPI.Controllers
 
         private bool EventExists(int id)
         {
-            return _context.Events.Any(e => e.event_id == id);
+            return _context.Events.Any(e => e.Event_id == id);
         }
     }
 }

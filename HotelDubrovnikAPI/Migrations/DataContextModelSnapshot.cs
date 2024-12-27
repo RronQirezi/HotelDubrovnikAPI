@@ -22,72 +22,73 @@ namespace HotelDubrovnikAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("HotelDubrovnikAPI.Models.Event", b =>
+            modelBuilder.Entity("HotelDubrovnikAPI.Models.Events", b =>
                 {
-                    b.Property<int>("event_id")
+                    b.Property<int>("Event_id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("event_id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Event_id"));
 
-                    b.Property<string>("description")
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("event_img")
+                    b.Property<string>("Event_img")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("event_title")
+                    b.Property<string>("Event_title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("event_url")
+                    b.Property<string>("Event_url")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("from_date")
+                    b.Property<DateTime>("FromDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("to_date")
+                    b.Property<DateTime>("ToDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("event_id");
+                    b.HasKey("Event_id");
 
                     b.ToTable("Events");
                 });
 
             modelBuilder.Entity("HotelDubrovnikAPI.Models.Reservations", b =>
                 {
-                    b.Property<int>("reservation_id")
+                    b.Property<int>("Reservation_id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("reservation_id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Reservation_id"));
 
-                    b.Property<DateTime>("from_date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("full_name")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("identification")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("From_date")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("payment")
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("phone_number")
+                    b.Property<int>("IdentificationNr")
                         .HasColumnType("int");
 
-                    b.Property<int>("room_id")
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PhoneNumber")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("to_date")
+                    b.Property<int>("Room_id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("To_date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("user_id")
-                        .HasColumnType("int");
-
-                    b.HasKey("reservation_id");
+                    b.HasKey("Reservation_id");
 
                     b.ToTable("Reservations");
                 });
@@ -122,6 +123,9 @@ namespace HotelDubrovnikAPI.Migrations
 
                     b.Property<int>("Room_Price")
                         .HasColumnType("int");
+
+                    b.Property<string>("Room_Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Room_Type")
                         .IsRequired()

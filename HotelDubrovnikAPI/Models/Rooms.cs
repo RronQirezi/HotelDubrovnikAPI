@@ -14,5 +14,6 @@ namespace HotelDubrovnikAPI.Models
         public string Room_Photo { get; set; } = String.Empty;
         public int Room_Price { get; set; }
         public int Room_Capacity { get; set; }
+        public string? Room_Status {  get; set; }
     }
 }

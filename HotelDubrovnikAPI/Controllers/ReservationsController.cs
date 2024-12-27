@@ -1,12 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using HotelDubrovnikAPI.Models;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using HotelDubrovnikAPI.Data;
-using HotelDubrovnikAPI.Models;
 
 namespace HotelDubrovnikAPI.Controllers
 {
@@ -25,34 +22,68 @@ namespace HotelDubrovnikAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Reservations>>> GetReservations()
         {
-            return await _context.Reservations.ToListAsync();
+            return await _context.Reservations.Include(r => r.Room_id).ToListAsync();
         }
 
         // GET: api/Reservations/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Reservations>> GetReservations(int id)
+        public async Task<ActionResult<Reservations>> GetReservation(int id)
         {
-            var reservations = await _context.Reservations.FindAsync(id);
+            var reservation = await _context.Reservations.Include(r => r.Room_id)
+                                                         .FirstOrDefaultAsync(r => r.Reservation_id == id);
 
-            if (reservations == null)
+            if (reservation == null)
             {
                 return NotFound();
             }
 
-            return reservations;
+            return reservation;
+        }
+
+        // POST: api/Reservations
+        [HttpPost]
+        public async Task<ActionResult<Reservations>> PostReservation(Reservations reservation)
+        {
+            // Check if room exists
+            var room = await _context.Rooms.FindAsync(reservation.Room_id);
+
+            if (room == null)
+            {
+                return NotFound("Room not found");
+            }
+
+            // Check if there is any overlapping reservation for the same room
+            var overlappingReservation = await _context.Reservations
+                .Where(r => r.Room_id == reservation.Room_id &&
+                            r.From_date < reservation.To_date && r.To_date > reservation.From_date)
+                .FirstOrDefaultAsync();
+
+            if (overlappingReservation != null)
+            {
+                return BadRequest("Room is already reserved for the selected date range.");
+            }
+
+            // Mark the room as booked (optional)
+            room.Booked = 1; // You might need more sophisticated room availability management
+            _context.Rooms.Update(room);
+
+            // Save the reservation
+            _context.Reservations.Add(reservation);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetReservation", new { id = reservation.Reservation_id }, reservation);
         }
 
         // PUT: api/Reservations/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutReservations(int id, Reservations reservations)
+        public async Task<IActionResult> PutReservation(int id, Reservations reservation)
         {
-            if (id != reservations.reservation_id)
+            if (id != reservation.Reservation_id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(reservations).State = EntityState.Modified;
+            _context.Entry(reservation).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +91,7 @@ namespace HotelDubrovnikAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ReservationsExists(id))
+                if (!ReservationExists(id))
                 {
                     return NotFound();
                 }
@@ -73,37 +104,32 @@ namespace HotelDubrovnikAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Reservations
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Reservations>> PostReservations(Reservations reservations)
-        {
-            _context.Reservations.Add(reservations);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetReservations", new { id = reservations.reservation_id }, reservations);
-        }
-
         // DELETE: api/Reservations/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteReservations(int id)
+        public async Task<IActionResult> DeleteReservation(int id)
         {
-            var reservations = await _context.Reservations.FindAsync(id);
-            if (reservations == null)
+            var reservation = await _context.Reservations.FindAsync(id);
+            if (reservation == null)
             {
                 return NotFound();
             }
 
-            _context.Reservations.Remove(reservations);
+            var room = await _context.Rooms.FindAsync(reservation.Room_id);
+            if (room != null)
+            {
+                room.Booked = 0; // Mark the room as available again
+                _context.Rooms.Update(room);
+            }
+
+            _context.Reservations.Remove(reservation);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-
-        private bool ReservationsExists(int id)
+        private bool ReservationExists(int id)
         {
-            return _context.Reservations.Any(e => e.reservation_id == id);
+            return _context.Reservations.Any(e => e.Reservation_id == id);
         }
     }
 }
