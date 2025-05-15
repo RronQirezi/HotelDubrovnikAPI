@@ -46,11 +46,29 @@ namespace HotelDubrovnikAPI.Controllers
         // PUT: api/Room/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRooms(int id, Rooms rooms)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> PutRooms(int id, [FromForm] Rooms rooms, IFormFile room_Photo)
         {
             if (id != rooms.Room_Id)
             {
                 return BadRequest();
+            }
+
+            if (room_Photo != null && room_Photo.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(room_Photo.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await room_Photo.CopyToAsync(stream);
+                }
+
+                rooms.Room_Photo = "/images/" + fileName;
             }
 
             _context.Entry(rooms).State = EntityState.Modified;
@@ -61,18 +79,15 @@ namespace HotelDubrovnikAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RoomsExists(id))
-                {
+                if (!_context.Rooms.Any(r => r.Room_Id == id))
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
         }
+
 
         // POST: api/Room
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
