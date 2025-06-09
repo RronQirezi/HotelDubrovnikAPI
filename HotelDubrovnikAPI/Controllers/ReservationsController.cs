@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using HotelDubrovnikAPI.Models;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
-using System;
+//using Microsoft.AspNetCore.Authorization;
 
 namespace HotelDubrovnikAPI.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class ReservationsController : ControllerBase
@@ -19,12 +16,13 @@ namespace HotelDubrovnikAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Reservations
+        // GET: api/Reservations/5
+        //[Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Reservations>> GetReservation(int id)//Gets a reservation by ID
+        public async Task<ActionResult<Reservations>> GetReservation(int id) // Gets a reservation by ID
         {
             var reservation = await _context.Reservations
-                .FirstOrDefaultAsync(r => r.Reservation_id == id); 
+                .FirstOrDefaultAsync(r => r.Reservation_id == id);
 
             if (reservation == null)
             {
@@ -34,9 +32,10 @@ namespace HotelDubrovnikAPI.Controllers
             return reservation;
         }
 
-        // GET: api/Reservations/5
+        // GET: api/Reservations
+        //[Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Reservations>>> GetReservations()//Gets all reservations, displays the data on a table in the front-end
+        public async Task<ActionResult<IEnumerable<Reservations>>> GetReservations() // Gets all reservations, token required
         {
             try
             {
@@ -50,10 +49,10 @@ namespace HotelDubrovnikAPI.Controllers
             }
         }
 
-
         // POST: api/Reservations
+        //[AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult<Reservations>> PostReservation([FromBody] Reservations reservation)//CREATES a reservation for a room.
+        public async Task<ActionResult<Reservations>> PostReservation([FromBody] Reservations reservation) // Creates a reservation, no token required
         {
             try
             {
@@ -78,7 +77,7 @@ namespace HotelDubrovnikAPI.Controllers
                     return NotFound("Room not found.");
                 }
 
-                var overlapping = await _context.Reservations       //checks for overlapping reservations based on the Room_Id, From_date and To_date.
+                var overlapping = await _context.Reservations
                     .Where(r => r.Room_id == reservation.Room_id &&
                                 r.From_date < reservation.To_date &&
                                 r.To_date > reservation.From_date)
@@ -93,7 +92,7 @@ namespace HotelDubrovnikAPI.Controllers
                 room.Booked = 1;
                 _context.Rooms.Update(room);
 
-                _context.Reservations.Add(reservation);//Reservation Created
+                _context.Reservations.Add(reservation);
                 await _context.SaveChangesAsync();
 
                 Console.WriteLine("Reservation created successfully. ID: " + reservation.Reservation_id);
@@ -108,32 +107,31 @@ namespace HotelDubrovnikAPI.Controllers
         }
 
         // PUT: api/Reservations/5
+        //[Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutReservation(int id, [FromBody] Reservations updatedReservation)//This function is on admin page only, the admin can update the reservation
+        public async Task<IActionResult> PutReservation(int id, [FromBody] Reservations updatedReservation)
         {
-            if (id != updatedReservation.Reservation_id)
+            if (id != updatedReservation.Reservation_id)//Check if current reservation ID matches the updated reservation ID
             {
                 return BadRequest("ID in URL does not match the reservation ID in body.");
             }
 
-            //Checks for existing reservation
-            var existingReservation = await _context.Reservations.FindAsync(id);
-            if (existingReservation == null)
+            var existingReservation = await _context.Reservations.FindAsync(id);//Check for existing reservation by ID.
+            if (existingReservation == null)//Check if reservation exists
             {
                 return NotFound("Reservation not found.");
             }
 
-            //Release the old room if room ID has changed
-            if (existingReservation.Room_id != updatedReservation.Room_id)
+            if (existingReservation.Room_id != updatedReservation.Room_id)//Checks if existing reservation matches updated reservation in relation to a room id.
             {
                 var oldRoom = await _context.Rooms.FindAsync(existingReservation.Room_id);
-                if (oldRoom != null)
+                if (oldRoom != null)//Checks if old room is reserved.
                 {
                     oldRoom.Booked = 0;
-                    _context.Rooms.Update(oldRoom);
+                    _context.Rooms.Update(oldRoom);//changes the room status to not booked.
                 }
 
-                var newRoom = await _context.Rooms.FindAsync(updatedReservation.Room_id);
+                var newRoom = await _context.Rooms.FindAsync(updatedReservation.Room_id);//new room reservation
                 if (newRoom == null)
                 {
                     return NotFound($"Room with ID {updatedReservation.Room_id} does not exist.");
@@ -142,8 +140,7 @@ namespace HotelDubrovnikAPI.Controllers
                 newRoom.Booked = 1;
                 _context.Rooms.Update(newRoom);
             }
-
-            //Fields to be inputed manually
+            //Fields to be updated to the reservation
             existingReservation.FullName = updatedReservation.FullName;
             existingReservation.Email = updatedReservation.Email;
             existingReservation.PhoneNumber = updatedReservation.PhoneNumber;
@@ -153,10 +150,9 @@ namespace HotelDubrovnikAPI.Controllers
             existingReservation.To_date = updatedReservation.To_date;
             existingReservation.Room_id = updatedReservation.Room_id;
 
-            //Save changes
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();//Reservation is updated
             }
             catch (Exception ex)
             {
@@ -167,28 +163,27 @@ namespace HotelDubrovnikAPI.Controllers
         }
 
         // DELETE: api/Reservations/5
+        //[Authorize]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteReservation(int id)//Deletes a reservation
+        public async Task<IActionResult> DeleteReservation(int id) 
         {
-            var reservation = await _context.Reservations.FindAsync(id);
+            var reservation = await _context.Reservations.FindAsync(id);//Finds reservation by ID
             if (reservation == null)
             {
                 return NotFound();
             }
 
-            var room = await _context.Rooms.FindAsync(reservation.Room_id);
+            var room = await _context.Rooms.FindAsync(reservation.Room_id);//Finds the room by ID that is bound to said reservation
             if (room != null)
             {
-                room.Booked = 0; // Mark the room as available again
+                room.Booked = 0; // Mark room available again
                 _context.Rooms.Update(room);
             }
 
-            _context.Reservations.Remove(reservation);
+            _context.Reservations.Remove(reservation);//Reservation is deleted from the database
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
-
-        
     }
 }
