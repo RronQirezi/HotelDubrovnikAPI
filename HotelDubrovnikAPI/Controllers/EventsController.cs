@@ -23,14 +23,14 @@ namespace HotelDubrovnikAPI.Controllers
 
         // GET: api/Events
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Events>>> GetEvents()
+        public async Task<ActionResult<IEnumerable<Events>>> GetEvents()//Gets all events
         {
             return await _context.Events.ToListAsync();
         }
 
         // GET: api/Events/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Events>> GetEvent(int id)
+        public async Task<ActionResult<Events>> GetEvent(int id)//Gets event by id
         {
             var @event = await _context.Events.FindAsync(id);
 
@@ -45,7 +45,7 @@ namespace HotelDubrovnikAPI.Controllers
         // PUT: api/Events/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEvent(int id, Events @event)
+        public async Task<IActionResult> PutEvent(int id, Events @event)//Updates Event
         {
             if (id != @event.Event_id)
             {
@@ -76,7 +76,7 @@ namespace HotelDubrovnikAPI.Controllers
         // POST: api/Events
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Events>> PostEvent(Events @event)
+        public async Task<ActionResult<Events>> PostEvent(Events @event)//Creates Event
         {
             _context.Events.Add(@event);
             await _context.SaveChangesAsync();
@@ -86,7 +86,7 @@ namespace HotelDubrovnikAPI.Controllers
 
         // DELETE: api/Events/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEvent(int id)
+        public async Task<IActionResult> DeleteEvent(int id)//Deletes event by ID
         {
             var @event = await _context.Events.FindAsync(id);
             if (@event == null)

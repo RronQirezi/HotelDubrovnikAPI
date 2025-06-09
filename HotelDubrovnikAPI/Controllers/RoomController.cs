@@ -24,8 +24,8 @@ namespace HotelDubrovnikAPI.Controllers
 
         // GET: api/Room
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Rooms>>> GetRooms()
-        {
+        public async Task<ActionResult<IEnumerable<Rooms>>> GetRooms()//Retrieves all rooms, will be displayed at a table in 
+        {                                                             //the admin panel and home page (with reservation possibility).
             return await _context.Rooms.ToListAsync();
         }
 
@@ -47,7 +47,7 @@ namespace HotelDubrovnikAPI.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> PutRooms(int id, [FromForm] Rooms rooms, IFormFile room_Photo)
+        public async Task<IActionResult> PutRooms(int id, [FromForm] Rooms rooms, IFormFile room_Photo)//Updates room details including photo.
         {
             if (id != rooms.Room_Id)
             {
@@ -56,11 +56,11 @@ namespace HotelDubrovnikAPI.Controllers
 
             if (room_Photo != null && room_Photo.Length > 0)
             {
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");//Sets upload folder as wwwroot/images
                 if (!Directory.Exists(uploadsFolder))
                     Directory.CreateDirectory(uploadsFolder);
 
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(room_Photo.FileName);
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(room_Photo.FileName);//Photo gets saved as a GUID
                 var filePath = Path.Combine(uploadsFolder, fileName);
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
@@ -75,7 +75,7 @@ namespace HotelDubrovnikAPI.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();//changes are saved and room is updated
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -92,7 +92,7 @@ namespace HotelDubrovnikAPI.Controllers
         // POST: api/Room
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Rooms>> PostRooms(Rooms rooms)
+        public async Task<ActionResult<Rooms>> PostRooms(Rooms rooms)//Creates room
         {
             _context.Rooms.Add(rooms);
             await _context.SaveChangesAsync();
@@ -102,7 +102,7 @@ namespace HotelDubrovnikAPI.Controllers
 
         // DELETE: api/Room/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRooms(int id)
+        public async Task<IActionResult> DeleteRooms(int id)//Deletes Room
         {
             var rooms = await _context.Rooms.FindAsync(id);
             if (rooms == null)
@@ -116,10 +116,6 @@ namespace HotelDubrovnikAPI.Controllers
             return NoContent();
         }
 
-        private bool RoomsExists(int id)
-        {
-            return _context.Rooms.Any(e => e.Room_Id == id);
-        }
 
         
     }

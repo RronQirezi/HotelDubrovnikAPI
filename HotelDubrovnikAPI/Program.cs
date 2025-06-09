@@ -9,9 +9,9 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("HotelConnectionString"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("HotelConnectionString"));//Establishing connection between the API and the SQL Server
 });
-builder.Services.AddCors(options => options.AddPolicy(name : "HotelAccess", 
+builder.Services.AddCors(options => options.AddPolicy(name : "HotelAccess", //This allows us to call the .NET API to a ReactJS front
     policy =>
     {
         policy.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
